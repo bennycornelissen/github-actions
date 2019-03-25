@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+CUSTOM_BRANCH="$1"
 PR_NUMBER=$(jq -r ".issue.number" "$GITHUB_EVENT_PATH")
 REPO_FULLNAME=$(jq -r ".repository.full_name" "$GITHUB_EVENT_PATH")
 echo "Collecting information about PR #$PR_NUMBER of $REPO_FULLNAME..."
@@ -43,6 +44,10 @@ fi
 
 git remote set-url origin https://x-access-token:$GITHUB_TOKEN@github.com/$REPO_FULLNAME.git
 
-git fetch origin ${BASE_BRANCH}
-git checkout ${BASE_BRANCH}
-
+if [[ ! -z ${CUSTOM_BRANCH} ]]; then
+  git fetch origin ${BASE_BRANCH}
+  git checkout ${BASE_BRANCH}
+else
+  git fetch origin ${CUSTOM_BRANCH}
+  git checkout ${CUSTOM_BRANCH}
+fi
